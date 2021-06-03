@@ -13,16 +13,17 @@ struct PostView: View {
     var post: PostData
     var colWidth: CGFloat
     @State var action: Bool = false
-    @State var user: User = User(id: "", username: Username(_content: ""), realname: Realname(_content: ""), profileurl: ProfileURL(_content: ""))
+
     
     var body: some View {
         NavigationLink(
-            destination: ProfileView(user: self.user),
+            destination: ProfileView(ownerID: post.userID),
             isActive: $action,
             label: {
                 HStack {
                     //profile image
-                    VStack {
+                    VStack(alignment: .leading)
+                    {
                         KFImage.url(URL(string: post.profileURL))
                             .aspectRatio(contentMode: .fit)
                             //.resizable()
@@ -30,25 +31,22 @@ struct PostView: View {
                             .cornerRadius(15)
                             .clipShape(Circle())
                             .overlay(Circle()
-                                        .stroke(Color.gray, lineWidth: 1))
+                            .stroke(Color.gray, lineWidth: 1))
                     }
                     //username
                     Text(post.username)
-                        .font(.system(size: 12, weight: .bold))
-                        .onTapGesture {
-                            self.fetch()
-                        }
+                        .font(.system(size: 14, weight: .bold))
                 }
-                .padding(.horizontal, 16)
+                .padding(.top, 30)
+                .padding(.bottom, 10)
+                .padding(.horizontal, 20)
+
             })
             
         //post image
-
-        VStack {
-            KFImage.url(URL(string: "https://live.staticflickr.com/\(post.postServer)/\(post.photoID)_\(post.postSecret).jpg")!)
-                .aspectRatio(contentMode: .fit)
-                .frame(width: colWidth)
-        }
+        KFImage.url(URL(string: "https://live.staticflickr.com/\(post.postServer)/\(post.photoID)_\(post.postSecret).jpg")!)
+            .aspectRatio(contentMode: .fill)
+            .frame(width: colWidth)
         
         //post title
         Text(post.photoTitle)
@@ -57,17 +55,7 @@ struct PostView: View {
             .padding(.top, 8)
         
         Spacer()
-            .frame(height: 64)
-    }
-    
-    func fetch() {
-        self.user = NetworkManager().userProfile(ownerId: post.userID)
-        print("------------------------")
-        print(self.user)
-        if self.user != nil {
-            action = true
-            
-        }
+            .frame(height: 24)
     }
 }
 
